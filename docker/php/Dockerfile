@@ -38,17 +38,13 @@ RUN apt-get update -qq && apt-get install -yq git golang-go &&\
 COPY conf.d/* /usr/local/etc/php/conf.d/
 RUN chmod 644 /usr/local/etc/php/conf.d/*
 
-# Install drush.
-# Download Drush 12.5.2 from github.com/drush-ops/drush/releases. This is a temporary fix.
-RUN php -r "readfile('https://github.com/drush-ops/drush/releases/download/12.5.2/drush.phar');" > drush
-# Or use our upcoming release: php -r "readfile('https://s3.amazonaws.com/files.drush.org/drush-unstable.phar');" > drush
-# Test your install.
-RUN php drush core-status
-# Make `drush` executable as a command from anywhere. Destination can be anywhere on $PATH.
-RUN chmod +x drush
-RUN mv drush /usr/local/bin
-
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN composer --version
+
+# Install drush.
+RUN composer global require drush/drush:12
+
+# Add Composer bin to PATH
+ENV PATH="/root/.composer/vendor/bin:${PATH}"
 
 WORKDIR /var/www/web
