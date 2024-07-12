@@ -1,4 +1,4 @@
-FROM php:7-apache
+FROM php:8.1-apache
 
 RUN apt-get update -qq \
   && apt-get install wget mariadb-client -yq
@@ -31,6 +31,7 @@ RUN { \
 RUN apt-get update -qq && apt-get install -yq git golang-go &&\
     mkdir -p /opt/go &&\
     export GOPATH=/opt/go &&\
+    go env -w GO111MODULE=off &&\
     go get github.com/mailhog/mhsendmail
 
 # Copy PHP configs.
@@ -38,8 +39,8 @@ COPY conf.d/* /usr/local/etc/php/conf.d/
 RUN chmod 644 /usr/local/etc/php/conf.d/*
 
 # Install drush.
-# Download Drush 8.1.16 from github.com/drush-ops/drush/releases. This is a temporary fix.
-RUN php -r "readfile('https://github.com/drush-ops/drush/releases/download/8.1.16/drush.phar');" > drush
+# Download Drush 12.5.2 from github.com/drush-ops/drush/releases. This is a temporary fix.
+RUN php -r "readfile('https://github.com/drush-ops/drush/releases/download/12.5.2/drush.phar');" > drush
 # Or use our upcoming release: php -r "readfile('https://s3.amazonaws.com/files.drush.org/drush-unstable.phar');" > drush
 # Test your install.
 RUN php drush core-status
